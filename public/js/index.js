@@ -14,10 +14,17 @@ class App extends React.Component {
     this.setState(lists);
   }
 
+  deleteListItem(index){
+    let lists = this.state.lists;
+    lists.splice(index, 1);
+
+    this.setState(lists);
+  }
+
   render() {
     return <div>
       <AddList onAdd={this.addList.bind(this)}/>
-      <ShowLists lists={this.state.lists}/>
+      <ShowLists lists={this.state.lists} deleteListItem={this.deleteListItem.bind(this)}/>
     </div>
   }
 }
@@ -41,13 +48,17 @@ class AddList extends React.Component {
 }
 
 class ShowLists extends React.Component {
+  deleteListItem(index){
+    this.props.deleteListItem(index);
+  }
+
   render() {
     const lists = this.props.lists.map((item, index) => {
       return (
         <li key={index} className="list-group-item list-item">
           <input type="checkbox" className="form-check-input"/>
           <span className="item-text">{item.value}</span>
-          <button type="button" className="btn btn-danger">delete</button>
+          <button type="button" className="btn btn-danger" onClick={this.deleteListItem.bind(this,index)}>delete</button>
         </li>
       );
     });
