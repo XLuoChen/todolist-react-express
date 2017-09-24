@@ -1,0 +1,15 @@
+{
+  "name": "express-react-todolist",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon app.js"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "express": "^4.15.4",
+    "nodemon": "^1.12.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  }
+}
