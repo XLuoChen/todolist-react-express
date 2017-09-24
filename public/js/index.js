@@ -7,32 +7,47 @@ class App extends React.Component {
     };
   }
 
-  addList(value) {
-    const lists = this.state.lists;
-    lists.push({value, static: false});
+  componentDidMount() {
+    $.get('/app/todolist', (lists) => {
+      this.setState({lists});
+    })
+  }
 
-    this.setState(lists);
+  addList(value) {
+    $.post('/app/todolist', {value}, (lists) => {
+      this.setState({lists});
+    }, 'json');
   }
 
   deleteListItem(index) {
-    let lists = this.state.lists;
-    lists.splice(index, 1);
-
-    this.setState(lists);
+    $.ajax({
+      url: '/app/todolist/',
+      type: 'DELETE',
+      dataType: "json",
+      data: {index: index},
+      success: ((lists) => {
+        this.setState({lists});
+      })
+    });
   }
 
   updateListItem(index) {
-    const lists = this.state.lists;
-    lists[index].static = !lists[index].static;
-
-    this.setState({lists});
+    $.ajax({
+      url: '/app/todolist/',
+      type: 'PUT',
+      dataType: "json",
+      data: {index: index},
+      success: ((lists) => {
+        this.setState({lists});
+      })
+    });
   }
 
   render() {
     return <div>
       <AddList onAdd={this.addList.bind(this)}/>
       <ShowLists lists={this.state.lists} completedLists={this.state.completedLists}
-        deleteListItem={this.deleteListItem.bind(this)} updateListItem={this.updateListItem.bind(this)}/>
+                 deleteListItem={this.deleteListItem.bind(this)} updateListItem={this.updateListItem.bind(this)}/>
     </div>
   }
 }
@@ -67,11 +82,11 @@ class ShowLists extends React.Component {
   render() {
     const completedLists = this.props.lists.filter(item => item.static);
     const lists = this.props.lists.map((item, index) => {
-      return item.static ? '' :(
+      return item.static ? '' : (
         <li key={index} className="list-group-item list-item">
-          <input type="checkbox" className="form-check-input" onChange={this.updateListItem.bind(this, index)}/>
+          <input type="checkbox" className="form-check-input" onChange={this.updateListItem.bind(this, item.index)}/>
           <span className="item-text">{item.value}</span>
-          <button type="button" className="btn btn-danger" onClick={this.deleteListItem.bind(this, index)}>delete
+          <button type="button" className="btn btn-danger" onClick={this.deleteListItem.bind(this, item.index)}>delete
           </button>
         </li>
       );

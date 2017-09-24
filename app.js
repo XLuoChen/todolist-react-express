@@ -20,7 +20,7 @@ app.get('/app/todolist', (req, res) => {
     if (data === '') {
       res.status(200).json([]);
     } else {
-      res.status(200).json(data);
+      res.status(200).json(JSON.parse(data).lists);
     }
   });
 });
@@ -47,55 +47,48 @@ app.post('/app/todolist', (req, res) => {
   });
 });
 
-app.delete('/app/todolist/:index', (req, res) => {
-  fs.readFile('./data.json', 'utf8', (err, data) => {
-    if (err) {
+app.delete('/app/todolist', (req,res) => {
+  fs.readFile('./data.json', 'utf8', function (err, data) {
+    if(err){
       return;
     }
-
     let newData = {index: 0, lists: []};
 
-    if (data !== '') {
+    if (data != '') {
       newData = JSON.parse(data);
-      let i;
-      for (i = 0; i < newData.lists.length; i++) {
-        if (newData.lists[i].index === parseInt(req.params.index)) {
-          newData.lists.splice(newData.lists[i].index, 1);
+      for(let i = 0; i < newData.lists.length ; i++) {
+        if(newData.lists[i].index === parseInt(req.body.index)){
+          newData.lists.splice(i, 1);
           break;
         }
       }
-
-      fs.writeFile('./data.json', JSON.stringify(newData), (err) => {
-        return;
-      });
-
-      res.status(200).json(newData.lists);
     }
+    fs.writeFile('./data.json', JSON.stringify(newData), function (err) {
+      return;
+    });
+    res.status(200).json(newData.lists);
   });
 });
 
-app.put('/app/todolist/:index', (req, res) => {
-  fs.readFile('./data.json', 'utf8', (err, data) => {
-    if (err) {
+app.put('/app/todolist', (req, res) => {
+  fs.readFile('./data.json', 'utf8', function (err, data) {
+    if(err){
       return;
     }
     let newData = {index: 0, lists: []};
 
-    if (data !== '') {
+    if (data != '') {
       newData = JSON.parse(data);
-
-      for (let i = 0; i < newData.lists.length; i++) {
-        if (newData.lists[i].index === parseInt(req.params.index)) {
+      for(let i = 0; i < newData.lists.length ; i++) {
+        if(newData.lists[i].index === parseInt(req.body.index)){
           newData.lists[i].static = !newData.lists[i].static;
           break;
         }
       }
     }
-
-    fs.writeFile('./data.json', JSON.stringify(newData), (err) => {
+    fs.writeFile('./data.json', JSON.stringify(newData), function (err) {
       return;
     });
-
     res.status(200).json(newData.lists);
   });
 });
