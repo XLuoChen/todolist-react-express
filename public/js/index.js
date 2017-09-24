@@ -34,8 +34,8 @@ class AddList extends React.Component {
   }
 
   render() {
-    return (<div>
-      <input type="text" ref="input" onKeyDown={this.enterChange.bind(this)}/>
+    return (<div className="col-lg-6">
+      <input type="text" ref="input" className="form-control" onKeyDown={this.enterChange.bind(this)}/>
     </div>)
   }
 }
@@ -43,15 +43,18 @@ class AddList extends React.Component {
 class ShowLists extends React.Component {
   render() {
     const lists = this.props.lists.map((item, index) => {
-      return (<div key={index}>
-        <input type="checkbox"/>
-        <li className="list-item">{item.value}</li>
-      </div>);
+      return (
+        <li key={index} className="list-group-item list-item">
+          <input type="checkbox" className="form-check-input"/>
+          <span className="item-text">{item.value}</span>
+          <button type="button" className="btn btn-danger">delete</button>
+        </li>
+      );
     });
 
-    return <div>
+    return <ul className="col-lg-7 list-group">
       {lists}
-    </div>
+    </ul>
   }
 }
 
