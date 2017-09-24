@@ -9,22 +9,30 @@ class App extends React.Component {
 
   addList(value) {
     const lists = this.state.lists;
-    lists.push({value, static: true});
+    lists.push({value, static: false});
 
     this.setState(lists);
   }
 
-  deleteListItem(index){
+  deleteListItem(index) {
     let lists = this.state.lists;
     lists.splice(index, 1);
 
     this.setState(lists);
   }
 
+  updateListItem(index) {
+    const lists = this.state.lists;
+    lists[index].static = !lists[index].static;
+
+    this.setState({lists});
+  }
+
   render() {
     return <div>
       <AddList onAdd={this.addList.bind(this)}/>
-      <ShowLists lists={this.state.lists} deleteListItem={this.deleteListItem.bind(this)}/>
+      <ShowLists lists={this.state.lists} completedLists={this.state.completedLists}
+        deleteListItem={this.deleteListItem.bind(this)} updateListItem={this.updateListItem.bind(this)}/>
     </div>
   }
 }
@@ -48,24 +56,33 @@ class AddList extends React.Component {
 }
 
 class ShowLists extends React.Component {
-  deleteListItem(index){
+  deleteListItem(index) {
     this.props.deleteListItem(index);
   }
 
+  updateListItem(index) {
+    this.props.updateListItem(index);
+  }
+
   render() {
+    const completedLists = this.props.lists.filter(item => item.static);
     const lists = this.props.lists.map((item, index) => {
-      return (
+      return item.static ? '' :(
         <li key={index} className="list-group-item list-item">
-          <input type="checkbox" className="form-check-input"/>
+          <input type="checkbox" className="form-check-input" onChange={this.updateListItem.bind(this, index)}/>
           <span className="item-text">{item.value}</span>
-          <button type="button" className="btn btn-danger" onClick={this.deleteListItem.bind(this,index)}>delete</button>
+          <button type="button" className="btn btn-danger" onClick={this.deleteListItem.bind(this, index)}>delete
+          </button>
         </li>
       );
     });
 
-    return <ul className="col-lg-7 list-group">
-      {lists}
-    </ul>
+    return (<div>
+      <ul className="col-lg-7 list-group">
+        {lists}
+      </ul>
+      <span>{completedLists.length} items have completed</span>
+    </div>)
   }
 }
 
